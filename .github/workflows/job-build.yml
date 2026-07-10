@@ -1,0 +1,57 @@
+# .github/workflows/job-build.yml
+name: 'Job: Build & Test'
+
+on:
+  workflow_call:
+    inputs:
+      packages:
+        required: true
+        type: string
+    secrets:
+      GH_PAT:
+        description: 'Token to read the private platform-libs repo (optional)'
+        required: false
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  build:
+    name: ${{ matrix.package }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(inputs.packages) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-dotnet-env
+
+      # Platform reference assemblies (active only once PLATFORM_LIBS_REPO is set).
+      # Until then this step skips and the build uses whatever is in .platform-libs.
+      - name: Restore platform libs
+        if: vars.PLATFORM_LIBS_REPO != ''
+        uses: ./.github/actions/restore-platform-libs
+        with:
+          repo: ${{ vars.PLATFORM_LIBS_REPO }}
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Build & Test
+        run: bash .github/scripts/build.sh "${{ matrix.package }}"
+      - name: Publish test results
+        uses: dorny/test-reporter@v3
+        if: always()
+        with:
+          name: Tests (${{ matrix.package }})
+          path: TestResults/*.trx
+          reporter: dotnet-trx
+          fail-on-error: false
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test-results-${{ matrix.package }}
+          path: TestResults/*.trx
+          if-no-files-found: ignore
+          retention-days: 14

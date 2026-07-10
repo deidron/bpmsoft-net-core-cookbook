@@ -1,0 +1,36 @@
+name: 🐞 Bug
+description: Report a bug in a package or example
+labels: [bug]
+body:
+  - type: input
+    id: package
+    attributes:
+      label: Package
+      description: Which package has the problem (top-level folder)
+      placeholder: IntegrationV2
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happens
+      description: Describe the problem and the expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: BPMSoft version, .NET SDK, OS
+    validations:
+      required: false

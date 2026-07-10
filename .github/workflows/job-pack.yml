@@ -1,0 +1,46 @@
+# .github/workflows/job-pack.yml
+name: 'Job: Pack'
+
+on:
+  workflow_call:
+    inputs:
+      packages:
+        description: "JSON array of all packages to be packed"
+        required: true
+        type: string
+    secrets:
+      GH_PAT:
+        description: "GitHub Personal Access Token for UBS setup"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  pack:
+    name: Pack
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup UBS
+        uses: ./.github/actions/setup-ubs
+        with:
+          token: ${{ secrets.GH_PAT }}
+          version: v1.3.0
+
+      - name: Create artifacts directory
+        run: mkdir -p ./artifacts
+
+      - name: Pack packages
+        env:
+          PACKAGES: ${{ inputs.packages }}
+        run: bash .github/scripts/pack.sh "$PACKAGES"
+
+      - name: Upload all artifacts
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: packaged-modules
+          path: ./artifacts/*.gz

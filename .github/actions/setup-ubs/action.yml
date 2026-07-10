@@ -1,0 +1,47 @@
+name: Setup UBS
+description: Download, extract and register Utilities of BPMSoft
+
+inputs:
+  token:
+    description: GitHub token to access ubs-releases repository
+    required: true
+  version:
+    description: UBS release version tag
+    required: true
+    default: v1.3.0
+
+runs:
+  using: composite
+  steps:
+    - name: Cache UBS
+      id: ubs-cache
+      uses: actions/cache@v6
+      with:
+        path: .ubs/app
+        key: ubs-${{ runner.os }}-${{ inputs.version }}
+
+    - name: Download UBS
+      if: steps.ubs-cache.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        UBS_VERSION: ${{ inputs.version }}
+      run: |
+        set -euo pipefail
+        gh release download "$UBS_VERSION" \
+          --repo deidron/ubs-releases \
+          --pattern "UtilitiesOfBpmSoft_Linux.zip" \
+          --dir .ubs
+        unzip .ubs/UtilitiesOfBpmSoft_Linux.zip -d .ubs/app
+
+    - name: Register UBS
+      run: sudo dotnet .ubs/app/ubs.dll register
+      shell: bash
+
+    - name: Expose ubs on PATH
+      shell: bash
+      run: bash "$GITHUB_ACTION_PATH/expose-ubs.sh"
+
+    - name: Verify UBS installation
+      shell: bash
+      run: command -v ubs || { echo "UBS not on PATH"; exit 1; }

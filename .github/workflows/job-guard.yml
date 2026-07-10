@@ -1,0 +1,30 @@
+# .github/workflows/job-guard.yml
+#
+# Reusable guard for production deploys: refuses to proceed unless the tagged
+# commit is contained in main. The actual check lives in
+# .github/scripts/guard-tag-on-main.sh.
+#
+# The check runs only for tag pushes (github.event_name == 'push'); a manual
+# workflow_dispatch is treated as a trusted test and skips the steps (the job
+# still succeeds, so the downstream chain proceeds).
+
+name: 'Job: Guard'
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    name: Verify tag is on main
+    runs-on: ubuntu-latest
+    steps:
+      - if: github.event_name == 'push'
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - if: github.event_name == 'push'
+        name: Verify commit is on main
+        run: bash .github/scripts/guard-tag-on-main.sh "${{ github.sha }}"

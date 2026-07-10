@@ -1,0 +1,25 @@
+name: 'Job: Format Schema'
+
+on:
+  workflow_call:
+    inputs:
+      packages:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  format_schema:
+    name: ${{ matrix.package }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(inputs.packages) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-dotnet-env
+      - run: bash .github/scripts/format-schema.sh "${{ matrix.package }}"

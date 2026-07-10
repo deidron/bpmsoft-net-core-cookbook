@@ -1,0 +1,39 @@
+{
+  "name": "BPMSoft .NET cookbook",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "ACTIONLINT_VERSION": "1.7.12",
+      "SHELLCHECK_VERSION": "0.10.0",
+      "YQ_VERSION": "4.53.3"
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postStartCommand": [
+    "find", "${containerWorkspaceFolder}", "-type", "d",
+    "(", "-name", "obj", "-o", "-name", "bin", ")",
+    "-prune", "-exec", "rm", "-rf", "{}", "+"
+  ],
+  "postCreateCommand": "bash scripts/fetch-platform-libs.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "files.exclude": { "dotnet": true },
+        "files.watcherExclude": { "**/dotnet/**": true }
+      },
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        "redhat.vscode-yaml",
+        "timonwong.shellcheck",
+        "github.vscode-github-actions"
+      ]
+    }
+  },
+  "runArgs": [
+    "--env-file",
+    "${localWorkspaceFolder}/.devcontainer/devcontainer.env"
+  ]
+}

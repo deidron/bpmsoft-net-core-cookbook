@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+# Collapse the push-vs-pull_request double run for the same branch: a push to a
+# feature branch with an open PR fires both `push` (ref_name=feature/x) and
+# `pull_request` synchronize (head_ref=feature/x). Keying on head_ref || ref_name puts
+# both in the same group so cancel-in-progress keeps a single run (and a single deploy).
+concurrency:
+  group: ci-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  run-ci:
+    name: Run orchestrator
+    uses: ./.github/workflows/ci-orchestrator.yml
+    secrets:
+      GH_PAT: ${{ secrets.GH_PAT }}
+
+  # Continuous deploy to development — kept out of the orchestrator (which is pure
+  # validation). Runs only on push to main (i.e. after a PR merge), once CI is green,
+  # and only if there are packages to deploy (the orchestrator skips pack when none
+  # are detected, so there would be no `packaged-modules` artifact). Real-branch
+  # context (correct deployment ref). Cancellation by a superseding push is fine here.
+  # Production deploys go through deploy-prod.yml on a v* tag instead.
+  deploy-dev:
+    name: Deploy (development)
+    needs: run-ci
+    if: ${{ github.event_name == 'push' && github.ref_name == 'main' && needs.run-ci.outputs.all_packages != '[]' }}
+    uses: ./.github/workflows/job-deploy.yml
+    with:
+      environment: development
+    secrets:
+      GH_PAT: ${{ secrets.GH_PAT }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

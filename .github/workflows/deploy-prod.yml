@@ -1,0 +1,91 @@
+# .github/workflows/deploy-prod.yml
+#
+# Production deploy — triggered by a release tag (v*). A mini-orchestrator that
+# reuses the same job-* workflows as CI: detect -> pack -> deploy. Runs as its own
+# top-level workflow (NOT workflow_run, NOT inside CI), so:
+#   - github.ref = the tag -> correct deployment ref/chip (e.g. v1.0.0),
+#   - it is NOT subject to ci.yml concurrency, so a push can never cancel it,
+#   - environment: production (in job-deploy) gates it behind required reviewers.
+#
+# Tags don't run the branch CI, so there are no prebuilt artifacts. We pack from
+# the tagged commit (job-pack), then deploy that artifact — the release matches
+# exactly what the tag points to. The tag sits on a main commit already CI-tested.
+#
+# workflow_dispatch allows a manual test run of the whole prod pipeline without a
+# tag. The release-assets job is gated so it only publishes a GitHub Release for a
+# real final tag (vX.Y.Z) — manual runs and pre-release/test tags (v*-*) deploy
+# but create no release.
+
+name: Deploy (production)
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # Refuse to release a commit that is not on main (a tag has no branch — we check
+  # commit ancestry). No-op on workflow_dispatch. Gates the whole chain.
+  guard:
+    name: Guard
+    uses: ./.github/workflows/job-guard.yml
+
+  detect:
+    name: Detect
+    needs: guard
+    uses: ./.github/workflows/job-detect.yml
+
+  pack:
+    name: Pack
+    needs: detect
+    if: needs.detect.outputs.all_packages != '[]'
+    uses: ./.github/workflows/job-pack.yml
+    with:
+      packages: ${{ needs.detect.outputs.all_packages }}
+    secrets:
+      GH_PAT: ${{ secrets.GH_PAT }}
+
+  deploy:
+    name: Deploy
+    needs: pack
+    uses: ./.github/workflows/job-deploy.yml
+    with:
+      environment: production
+    secrets:
+      GH_PAT: ${{ secrets.GH_PAT }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+  # Publish a GitHub Release with the deployed packages — only after a successful
+  # deploy, and only for a real final tag. A release exists ⟺ that version shipped.
+  # Skipped for: manual dispatch (no tag) and pre-release/test tags (v*-*).
+  release-assets:
+    name: Release assets
+    needs: deploy
+    if: ${{ github.event_name == 'push' && !contains(github.ref_name, '-') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: packaged-modules
+          path: ./artifacts
+      - name: Create release with packages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # gh resolves the repo from GH_REPO instead of git — this job has no checkout.
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          # Idempotent: a re-run or re-tag must not fail on an existing release.
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists — refreshing its assets."
+            gh release upload "$TAG" ./artifacts/*.gz --clobber
+          else
+            gh release create "$TAG" ./artifacts/*.gz \
+              --title "$TAG" --generate-notes
+          fi

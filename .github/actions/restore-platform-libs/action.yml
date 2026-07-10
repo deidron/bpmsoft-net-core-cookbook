@@ -1,0 +1,51 @@
+name: Restore platform libs
+description: >
+  Resolve the platform-libs ref to a SHA, restore .platform-libs from the actions
+  cache, and on a cache miss sparse-checkout the BPMSoft reference assemblies from
+  the private repo and copy them flat into .platform-libs. The whole read-config +
+  cache + fetch sequence shared by the build and format jobs lives here. Caller
+  gates this on `vars.PLATFORM_LIBS_REPO != ''`.
+
+inputs:
+  repo:
+    description: 'owner/name of the private platform-libs repository'
+    required: true
+  token:
+    description: 'token with read access to the platform-libs repository'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Read platform config
+      id: platform
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        LIBS_REPO: ${{ inputs.repo }}
+      run: bash "$GITHUB_ACTION_PATH/resolve-platform-libs.sh"
+
+    - name: Cache platform libs
+      id: libs-cache
+      uses: actions/cache@v6
+      with:
+        path: .platform-libs
+        key: platform-libs-${{ steps.platform.outputs.version }}-${{ steps.platform.outputs.edition }}-${{ steps.platform.outputs.sha }}
+
+    - name: Fetch platform libs
+      if: steps.libs-cache.outputs.cache-hit != 'true'
+      uses: actions/checkout@v7
+      with:
+        repository: ${{ inputs.repo }}
+        ref: ${{ steps.platform.outputs.sha }}
+        token: ${{ inputs.token }}
+        sparse-checkout: ${{ steps.platform.outputs.version }}/${{ steps.platform.outputs.edition }}
+        path: .platform-libs-src
+
+    - name: Copy DLLs into .platform-libs
+      if: steps.libs-cache.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        PLATFORM_VERSION: ${{ steps.platform.outputs.version }}
+        EDITION: ${{ steps.platform.outputs.edition }}
+      run: bash "$GITHUB_ACTION_PATH/copy-platform-libs.sh"

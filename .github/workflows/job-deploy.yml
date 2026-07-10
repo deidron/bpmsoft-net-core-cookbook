@@ -1,0 +1,92 @@
+# .github/workflows/job-deploy.yml
+#
+# Reusable deploy job. Called from:
+#   - ci.yml (deploy-dev) with environment: development, on push to main (PR merge);
+#   - deploy-prod.yml (deploy) with environment: production, on tag v*.
+#
+# Runs in the caller's context, so the deployment ref is correct (no workflow_run
+# default-branch chip). The target environment and concurrency are driven by the
+# `environment` input, not by the branch — so the same job serves dev and prod.
+# Expects the `packaged-modules` artifact to exist in the same run (uploaded by pack).
+
+name: 'Job: Deploy'
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Target environment (development | production)'
+        required: true
+        type: string
+    secrets:
+      GH_PAT:
+        description: 'Token for UBS setup'
+        required: true
+      TELEGRAM_BOT_TOKEN:
+        description: 'Telegram bot token for deploy notifications (optional)'
+        required: false
+      TELEGRAM_CHAT_ID:
+        description: 'Telegram chat id for deploy notifications (optional)'
+        required: false
+      # BPMSOFT_* are environment secrets — resolved from the selected
+      # environment below, no need to pass them through workflow_call.
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    # Concurrency keyed on the environment (= the server), so two deploys never
+    # hit the same environment at once. cancel-in-progress: false → queue, never
+    # cut off an in-flight deploy.
+    concurrency:
+      group: deploy-${{ inputs.environment }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download package artifacts
+        # Same-run artifacts produced by the pack job — no run-id needed.
+        uses: actions/download-artifact@v8
+        with:
+          name: packaged-modules
+          path: ./artifacts
+
+      - name: Setup UBS
+        uses: ./.github/actions/setup-ubs
+        with:
+          token: ${{ secrets.GH_PAT }}
+          version: v1.3.0
+
+      - name: List artifacts
+        run: ls -la ./artifacts/
+
+      - name: Deploy to BPMSoft [STUB]
+        env:
+          BPMSOFT_URL: ${{ secrets.BPMSOFT_URL }}
+          BPMSOFT_USER: ${{ secrets.BPMSOFT_USER }}
+          BPMSOFT_PASSWORD: ${{ secrets.BPMSOFT_PASSWORD }}
+        run: bash .github/scripts/deploy.sh
+
+      # Notify on success only for production (dev success would be noise on every merge).
+      - name: Notify success
+        if: ${{ success() && inputs.environment == 'production' }}
+        env:
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DEPLOY_BRANCH: ${{ github.ref_name }}
+          DEPLOY_ENV: ${{ inputs.environment }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: bash .github/scripts/notify.sh success
+
+      - name: Notify on failure
+        if: failure()
+        env:
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DEPLOY_BRANCH: ${{ github.ref_name }}
+          DEPLOY_ENV: ${{ inputs.environment }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: bash .github/scripts/notify.sh failure

@@ -1,0 +1,28 @@
+name: 'Job: Detect'
+
+on:
+  workflow_call:
+    outputs:
+      package_project:
+        description: "JSON array of package projects"
+        value: ${{ jobs.detect.outputs.package_project }}
+      all_packages:
+        description: "JSON array of all packages"
+        value: ${{ jobs.detect.outputs.all_packages }}
+
+permissions:
+  contents: read
+
+jobs:
+  detect:
+    name: Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      package_project: ${{ steps.scan.outputs.package_project }}
+      all_packages: ${{ steps.scan.outputs.all_packages }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Scan
+        id: scan
+        run: bash .github/scripts/detect.sh

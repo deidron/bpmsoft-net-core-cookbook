@@ -1,0 +1,7 @@
+paths:
+  .github/workflows/job-deploy.yml:
+    ignore:
+      # BPMSOFT_* are environment secrets — resolved from the job's selected
+      # environment, not declared in workflow_call.secrets. actionlint can't see
+      # environment secrets, so it false-positives "is not defined" on them.
+      - 'property "bpmsoft_\w+" is not defined'

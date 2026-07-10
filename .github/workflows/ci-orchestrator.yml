@@ -1,0 +1,99 @@
+
+name: CI Orchestrator
+
+on:
+  workflow_call:
+    outputs:
+      all_packages:
+        description: "JSON array of all detected packages (for the caller to gate deploy)"
+        value: ${{ jobs.detect.outputs.all_packages }}
+    secrets:
+      GH_PAT:
+        required: true
+
+permissions:
+  contents: read
+  checks: write
+
+# Concurrency is handled by the caller (ci.yml) keyed on head_ref || ref_name,
+# which also collapses the push-vs-pull_request duplicate. A ref-keyed group here
+# never deduped across those events, so it is removed to keep one authoritative scope.
+
+jobs:
+  detect:
+    name: Detect
+    uses: ./.github/workflows/job-detect.yml
+
+  format:
+    name: Format
+    needs: detect
+    if: needs.detect.outputs.package_project != '[]'
+    uses: ./.github/workflows/job-format.yml
+    with:
+      packages: ${{ needs.detect.outputs.package_project }}
+    secrets:
+      GH_PAT: ${{ secrets.GH_PAT }}
+
+  format-schema:
+    name: Format schemas
+    needs: detect
+    if: needs.detect.outputs.all_packages != '[]'
+    uses: ./.github/workflows/job-format-schema.yml
+    with:
+      packages: ${{ needs.detect.outputs.all_packages }}
+
+  build:
+    name: Build & Test
+    needs: [detect, format]
+    uses: ./.github/workflows/job-build.yml
+    with:
+      packages: ${{ needs.detect.outputs.package_project }}
+    secrets:
+      GH_PAT: ${{ secrets.GH_PAT }}
+
+  pack:
+    name: Pack
+    needs: [detect, format-schema, build]
+    # format & build are SKIPPED for schema-only packages (no code project). A skipped
+    # need would normally skip pack too, so use !cancelled() to run anyway — while still
+    # bailing out if detect didn't succeed or an upstream actually failed.
+    if: >-
+      ${{ !cancelled()
+      && needs.detect.result == 'success'
+      && needs.detect.outputs.all_packages != '[]'
+      && needs.build.result != 'failure'
+      && needs.format-schema.result != 'failure' }}
+    uses: ./.github/workflows/job-pack.yml
+    with:
+      packages: ${{ needs.detect.outputs.all_packages }}
+    secrets:
+      GH_PAT: ${{ secrets.GH_PAT }}
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # actionlint (official image, bundles shellcheck) validates workflow YAML and
+      # shellchecks inline run: blocks. Config in .github/actionlint.yaml.
+      - name: actionlint (workflows)
+        run: docker run --rm -v "$PWD:/repo" --workdir /repo rhysd/actionlint:1.7.12 -color
+      # shellcheck covers the standalone .sh scripts (actionlint only lints workflow
+      # files). --shell=bash since the scripts are bash and run via `bash x.sh`.
+      - name: shellcheck (scripts)
+        run: find .github -name '*.sh' -print0 | xargs -0 shellcheck --shell=bash
+
+  # Aggregate gate: a single stable check to require in branch rulesets.
+  # Skipped on cancellation (so cancel-in-progress stays clean); fails only
+  # when an upstream job actually failed. 'skipped' upstream jobs are OK.
+  ci-success:
+    name: CI Success
+    needs: [detect, format, format-schema, build, pack, lint]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any upstream job failed
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: |
+          echo "::error::One or more CI jobs failed"
+          exit 1

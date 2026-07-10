@@ -1,0 +1,18 @@
+# CODEOWNERS — who must review changes.
+# Works together with the rulesets (.github/rulesets): enable the
+# require_code_owner_review rule in a ruleset to make the owner's approval mandatory.
+# Syntax: <path> <@owner...>. The last matching rule wins.
+
+# Default owner for the entire repository
+*                       @deidron
+
+# CI/CD infrastructure, scripts, templates, rulesets
+/.github/               @deidron
+
+# (Platform DLLs are no longer in-repo — fetched at CI time into the gitignored
+#  .platform-libs/, so there is nothing to own here.)
+
+# Example packages (as the team grows you can assign a dedicated owner
+# to each package, for example:)
+# /IntegrationV2/       @integration-team
+# /OmnichannelMessaging/ @messaging-team
