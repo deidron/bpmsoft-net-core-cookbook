@@ -1,2 +1,7 @@
-# Shell scripts must stay LF — CRLF breaks them on the Linux CI runners.
-*.sh text eol=lf
+# Normalize everything to LF by default; Windows checkouts (core.autocrlf=true)
+* text=auto eol=lf
+
+# cmd.exe has real historical parsing issues with LF-only batch files - keep
+# these native Windows CRLF (matches .editorconfig's [*.{cmd,bat}] override).
+*.cmd eol=crlf
+*.bat eol=crlf

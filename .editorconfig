@@ -11,6 +11,8 @@ insert_final_newline = true
 indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
+# LF everywhere by default, matching .gitattributes' blanket `* text=auto eol=lf`.
+end_of_line = lf
 
 # Specify UTF-8 without byte-order mark
 [*.{csproj,locproj,nativeproj,proj,resx,slnx,vbproj}]
@@ -221,8 +223,8 @@ indent_size = 2
 [*.{json,yaml,yml}]
 indent_size = 2
 
-# Shell scripts
-[*.sh]
-end_of_line = lf
+# Batch files - the one exception to the LF-everywhere default (matches
+# .gitattributes): cmd.exe has real historical parsing issues with LF-only
+# batch files.
 [*.{cmd,bat}]
 end_of_line = crlf
