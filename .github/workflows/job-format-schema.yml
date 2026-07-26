@@ -1,4 +1,4 @@
-name: 'Job: Format Schema'
+name: "Job: Format Schema"
 
 on:
   workflow_call:

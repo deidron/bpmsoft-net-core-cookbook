@@ -10,14 +10,14 @@ Full rationale and the deploy mapping: [docs/BRANCHING_TRUNK_BASED.md](docs/BRAN
 
 Working branches are `<prefix>/<short-description>` in kebab-case (lowercase, digits, `-`):
 
-| Prefix | Purpose |
-|--------|---------|
-| `feature/` | new functionality / new package |
-| `fix/` | bug fix |
-| `hotfix/` | urgent fix |
-| `chore/` | infrastructure, dependencies, chores |
-| `docs/` | documentation only |
-| `refactor/` | refactoring with no behavior change |
+| Prefix      | Purpose                              |
+| ----------- | ------------------------------------ |
+| `feature/`  | new functionality / new package      |
+| `fix/`      | bug fix                              |
+| `hotfix/`   | urgent fix                           |
+| `chore/`    | infrastructure, dependencies, chores |
+| `docs/`     | documentation only                   |
+| `refactor/` | refactoring with no behavior change  |
 
 **Enforced** by the [`branch-naming.json`](.github/rulesets/branch-naming.json) ruleset — a branch
 with a non-conforming name cannot be created (only `main` is exempt).

@@ -8,7 +8,7 @@
 # workflow_dispatch is treated as a trusted test and skips the steps (the job
 # still succeeds, so the downstream chain proceeds).
 
-name: 'Job: Guard'
+name: "Job: Guard"
 
 on:
   workflow_call:

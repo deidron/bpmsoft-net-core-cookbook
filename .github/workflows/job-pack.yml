@@ -1,5 +1,5 @@
 # .github/workflows/job-pack.yml
-name: 'Job: Pack'
+name: "Job: Pack"
 
 on:
   workflow_call:

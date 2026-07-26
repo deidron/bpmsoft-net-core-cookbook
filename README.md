@@ -32,21 +32,21 @@ are merely formatted and packed.
 
 Runs on push and PR to `main` ([`ci.yml`](.github/workflows/ci.yml) → orchestrator):
 
-| Stage | What it does |
-|-------|--------------|
-| **Detect** | scans the root, builds the list of packages |
-| **Format** | format check for code projects (`dotnet format`) |
-| **Format schemas** | format check for schema-only packages |
-| **Build & Test** | `dotnet build` + `dotnet test` (Release) for each code project |
-| **Pack** | `ubs zip` — produces `.gz` package artifacts |
+| Stage                    | What it does                                                                        |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| **Detect**               | scans the root, builds the list of packages                                         |
+| **Format**               | format check for code projects (`dotnet format`)                                    |
+| **Format schemas**       | format check for schema-only packages                                               |
+| **Build & Test**         | `dotnet build` + `dotnet test` (Release) for each code project                      |
+| **Pack**                 | `ubs zip` — produces `.gz` package artifacts                                        |
 | **Deploy (development)** | after each merge to `main`, once CI is green ([`ci.yml`](.github/workflows/ci.yml)) |
 
 This repo is **trunk-based** (`main` only); deploy targets depend on the trigger:
 
-| Trigger | GitHub Environment |
-|---------|--------------------|
-| merge to `main` (CI green) | `development` |
-| `v*` release tag ([`deploy-prod.yml`](.github/workflows/deploy-prod.yml), gated) | `production` |
+| Trigger                                                                          | GitHub Environment |
+| -------------------------------------------------------------------------------- | ------------------ |
+| merge to `main` (CI green)                                                       | `development`      |
+| `v*` release tag ([`deploy-prod.yml`](.github/workflows/deploy-prod.yml), gated) | `production`       |
 
 > **Deploy is currently a stub:** [`deploy.sh`](.github/scripts/deploy.sh) prints `[STUB] ubs install ...`,
 > the real install is commented out. To enable real deployment, uncomment `ubs install`
