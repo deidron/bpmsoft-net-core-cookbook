@@ -3,10 +3,10 @@
 CI runs two linters in the **Lint** job ([`ci-orchestrator.yml`](../.github/workflows/ci-orchestrator.yml)),
 gated by the aggregate `CI Success` check:
 
-| Linter | Lints | Catches |
-|--------|-------|---------|
+| Linter         | Lints                     | Catches                                                                                                                                                    |
+| -------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **actionlint** | `.github/workflows/*.yml` | invalid workflow syntax, undefined `secrets`/`vars`/`inputs`/`needs`, bad expressions, deprecated runner labels; also shellchecks **inline `run:`** blocks |
-| **shellcheck** | `.github/**/*.sh` | quoting bugs (word-splitting/globbing), unsafe patterns, portability issues — each with an `SC####` code |
+| **shellcheck** | `.github/**/*.sh`         | quoting bugs (word-splitting/globbing), unsafe patterns, portability issues — each with an `SC####` code                                                   |
 
 > Coverage gap: neither tool lints `run:` blocks inside composite **`action.yml`** files. Keep real
 > shell logic in `.sh` scripts (covered by shellcheck) rather than inline in `action.yml`. The local

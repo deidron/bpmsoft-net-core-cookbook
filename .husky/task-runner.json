@@ -1,11 +1,11 @@
 {
-   "$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
-   "tasks": [
-      {
-         "name": "commit-msg (conventional commits)",
-         "group": "commit-msg",
-         "command": "bash",
-         "args": [ ".husky/commit-msg.sh", "${args}" ]
-      }
-   ]
+  "$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
+  "tasks": [
+    {
+      "name": "commit-msg (conventional commits)",
+      "group": "commit-msg",
+      "command": "bash",
+      "args": [".husky/commit-msg.sh", "${args}"]
+    }
+  ]
 }

@@ -9,11 +9,11 @@ These are not active settings — they must be imported into the repository manu
 
 ## What's inside
 
-| File | Target | What it does |
-|------|--------|--------------|
-| [`main-protection.json`](main-protection.json) | `main` branch (default) | PR required (no approval needed, no bypass), thread resolution, linear history, no force-push/deletion, required CI checks (strict) |
-| [`tag-protection.json`](tag-protection.json) | `v*` tags | No deletion, moving, or overwriting of release tags |
-| [`branch-naming.json`](branch-naming.json) | all branches | Blocks creating branches with non-conforming names (allowed: `main`, `feature/**`, `fix/**`, `hotfix/**`, `chore/**`, `docs/**`, `refactor/**`, `dependabot/**`) |
+| File                                           | Target                  | What it does                                                                                                                                                     |
+| ---------------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`main-protection.json`](main-protection.json) | `main` branch (default) | PR required (no approval needed, no bypass), thread resolution, linear history, no force-push/deletion, required CI checks (strict)                              |
+| [`tag-protection.json`](tag-protection.json)   | `v*` tags               | No deletion, moving, or overwriting of release tags                                                                                                              |
+| [`branch-naming.json`](branch-naming.json)     | all branches            | Blocks creating branches with non-conforming names (allowed: `main`, `feature/**`, `fix/**`, `hotfix/**`, `chore/**`, `docs/**`, `refactor/**`, `dependabot/**`) |
 
 This repo uses the **trunk-based** model — a single long-lived `main` branch
 (see [docs/BRANCHING_TRUNK_BASED.md](../../docs/BRANCHING_TRUNK_BASED.md)), so there is one
@@ -42,9 +42,11 @@ Until then the imported string stands as-is and starts matching on the first run
 ## How to import
 
 ### Via UI
+
 **Settings → Rules → Rulesets → New ruleset → Import a ruleset** → select the JSON file.
 
 ### Via gh CLI
+
 ```bash
 gh api repos/deidron/bpmsoft-net-core-cookbook/rulesets \
   --method POST -H "Accept: application/vnd.github+json" \

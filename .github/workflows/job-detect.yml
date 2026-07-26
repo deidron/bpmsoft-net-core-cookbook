@@ -1,4 +1,4 @@
-name: 'Job: Detect'
+name: "Job: Detect"
 
 on:
   workflow_call:

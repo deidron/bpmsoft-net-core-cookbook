@@ -12,9 +12,23 @@
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "postStartCommand": [
-    "find", "${containerWorkspaceFolder}", "-type", "d",
-    "(", "-name", "obj", "-o", "-name", "bin", ")",
-    "-prune", "-exec", "rm", "-rf", "{}", "+"
+    "find",
+    "${containerWorkspaceFolder}",
+    "-type",
+    "d",
+    "(",
+    "-name",
+    "obj",
+    "-o",
+    "-name",
+    "bin",
+    ")",
+    "-prune",
+    "-exec",
+    "rm",
+    "-rf",
+    "{}",
+    "+"
   ],
   "postCreateCommand": "bash scripts/fetch-platform-libs.sh",
   "customizations": {

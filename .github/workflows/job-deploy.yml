@@ -9,24 +9,24 @@
 # `environment` input, not by the branch — so the same job serves dev and prod.
 # Expects the `packaged-modules` artifact to exist in the same run (uploaded by pack).
 
-name: 'Job: Deploy'
+name: "Job: Deploy"
 
 on:
   workflow_call:
     inputs:
       environment:
-        description: 'Target environment (development | production)'
+        description: "Target environment (development | production)"
         required: true
         type: string
     secrets:
       GH_PAT:
-        description: 'Token for UBS setup'
+        description: "Token for UBS setup"
         required: true
       TELEGRAM_BOT_TOKEN:
-        description: 'Telegram bot token for deploy notifications (optional)'
+        description: "Telegram bot token for deploy notifications (optional)"
         required: false
       TELEGRAM_CHAT_ID:
-        description: 'Telegram chat id for deploy notifications (optional)'
+        description: "Telegram chat id for deploy notifications (optional)"
         required: false
       # BPMSOFT_* are environment secrets — resolved from the selected
       # environment below, no need to pass them through workflow_call.

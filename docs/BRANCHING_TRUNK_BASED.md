@@ -47,11 +47,11 @@ No special branch, no back-merge.
 `main` and the release tags are guarded by rulesets (definitions and import steps in
 [`.github/rulesets/README.md`](../.github/rulesets/README.md)):
 
-| Ruleset | Target | Enforces |
-|---------|--------|----------|
-| `main-protection` | `refs/heads/main` | PR required, no bypass, linear history, required CI, no force-push |
-| `tag-protection` | `refs/tags/v*` | release tags cannot be deleted/moved/overwritten |
-| `branch-naming` | `~ALL` minus allowed prefixes | `feature/ fix/ hotfix/ chore/ docs/ refactor/` (+ `dependabot/`) |
+| Ruleset           | Target                        | Enforces                                                           |
+| ----------------- | ----------------------------- | ------------------------------------------------------------------ |
+| `main-protection` | `refs/heads/main`             | PR required, no bypass, linear history, required CI, no force-push |
+| `tag-protection`  | `refs/tags/v*`                | release tags cannot be deleted/moved/overwritten                   |
+| `branch-naming`   | `~ALL` minus allowed prefixes | `feature/ fix/ hotfix/ chore/ docs/ refactor/` (+ `dependabot/`)   |
 
 `main-protection` also limits PR merges to **squash only** (`allowed_merge_methods: ["squash"]`).
 Beyond the rulesets, the repository is configured (GitHub repo settings, not config-as-code) to
@@ -72,6 +72,6 @@ Deploy targets depend on the trigger, not the branch:
 - ❌ No direct push to `main` — everything goes through a PR.
 - ❌ No long-lived `dev` branch — it would reintroduce the `dev`↔`main` sync problem with no benefit.
 
-> Trade-off to be aware of: `development` reflects `main` *after* merge, so there is no staging of
+> Trade-off to be aware of: `development` reflects `main` _after_ merge, so there is no staging of
 > "merged but not yet on `main`"; and releases rely on tag discipline rather than a visible release
 > branch.

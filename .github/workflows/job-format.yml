@@ -1,4 +1,4 @@
-name: 'Job: Format'
+name: "Job: Format"
 
 on:
   workflow_call:
@@ -8,7 +8,7 @@ on:
         type: string
     secrets:
       GH_PAT:
-        description: 'Token to read the private platform-libs repo (optional)'
+        description: "Token to read the private platform-libs repo (optional)"
         required: false
 
 permissions:

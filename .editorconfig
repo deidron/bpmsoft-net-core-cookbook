@@ -223,6 +223,11 @@ indent_size = 2
 [*.{json,yaml,yml}]
 indent_size = 2
 
+# Markdown - matches Prettier's own default and CommonMark's minimal correct
+# nesting width, not the C#-oriented root default.
+[*.md]
+indent_size = 2
+
 # Batch files - the one exception to the LF-everywhere default (matches
 # .gitattributes): cmd.exe has real historical parsing issues with LF-only
 # batch files.

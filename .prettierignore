@@ -1,0 +1,11 @@
+**/*.cs
+bin/
+obj/
+
+# BPMSoft writes these package/schema metadata files with a UTF-8 BOM,
+# which Prettier's output never preserves - same unfixable-mismatch situation
+# as the resource.*.xml carve-out used to be. Scoped by filename (not by
+# package folder) since every package gets its own copy of these three.
+**/descriptor.json
+**/metadata.json
+**/properties.json

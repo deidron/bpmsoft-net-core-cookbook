@@ -20,7 +20,7 @@ name: Deploy (production)
 
 on:
   push:
-    tags: ['v*']
+    tags: ["v*"]
   workflow_dispatch:
 
 permissions:

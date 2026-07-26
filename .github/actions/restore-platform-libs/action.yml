@@ -8,10 +8,10 @@ description: >
 
 inputs:
   repo:
-    description: 'owner/name of the private platform-libs repository'
+    description: "owner/name of the private platform-libs repository"
     required: true
   token:
-    description: 'token with read access to the platform-libs repository'
+    description: "token with read access to the platform-libs repository"
     required: true
 
 runs:
