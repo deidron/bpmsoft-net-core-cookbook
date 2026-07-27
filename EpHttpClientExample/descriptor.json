@@ -1,0 +1,47 @@
+﻿{
+  "Descriptor": {
+    "UId": "b114a30b-99e1-4ad2-c2c7-c7aff5660253",
+    "PackageVersion": "1.0.0",
+    "Name": "EpHttpClientExample",
+    "BPMSoftVersion": "1.9.1",
+    "ModifiedOnUtc": "\/Date(1783705860000)\/",
+    "Maintainer": "EP",
+    "DependsOn": [
+      {
+        "UId": "3218e5ec-25c1-472b-9de0-1673e071a79f",
+        "PackageVersion": "1.0.0",
+        "Name": "Platform"
+      },
+      {
+        "UId": "5be3998b-c5c3-42bb-a01c-2e4149059a97",
+        "PackageVersion": "1.0.0",
+        "Name": "Base"
+      },
+      {
+        "UId": "613fd913-be03-46ce-909b-f44e4225469e",
+        "PackageVersion": "1.0.0",
+        "Name": "UIv2"
+      },
+      {
+        "UId": "6f46362b-0d60-47d7-b211-fc5e4117aecb",
+        "PackageVersion": "1.0.0",
+        "Name": "ProcessDesigner"
+      },
+      {
+        "UId": "99e69b3f-057b-4163-9247-fdd98287561f",
+        "PackageVersion": "1.0.0",
+        "Name": "Managers"
+      },
+      {
+        "UId": "a7d9c356-450c-46d7-bc85-72dca4e280ba",
+        "PackageVersion": "1.0.0",
+        "Name": "NUI"
+      },
+      {
+        "UId": "c2518826-60a9-40d4-bd14-6add9d35d320",
+        "PackageVersion": "1.0.0",
+        "Name": "DesignerTools"
+      }
+    ]
+  }
+}
