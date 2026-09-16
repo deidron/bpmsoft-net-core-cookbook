@@ -1,0 +1,5 @@
+<Project>
+    <PropertyGroup>
+        <LocalGitLibsPath>$(MSBuildThisFileDirectory)..\.platform-libs</LocalGitLibsPath>
+    </PropertyGroup>
+</Project>

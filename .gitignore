@@ -478,3 +478,6 @@ ServiceDesigner/
 SspWorkplace/
 UIv2/
 Workplace/
+
+# Machine-specific package settings (local paths, IIS app pool)
+**/local.props

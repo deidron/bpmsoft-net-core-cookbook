@@ -1,0 +1,26 @@
+<Project>
+  <PropertyGroup Condition="!$(AssemblyName.EndsWith('.Configuration'))">
+    <AnalysisMode>All</AnalysisMode>
+    <!-- Style level 9.0 attaches the IDE rule set on the .NET 8 SDK:
+         https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/language-rules#option-format
+         https://github.com/dotnet/roslyn/pull/71173 -->
+    <AnalysisLevel>8.0</AnalysisLevel>
+    <AnalysisLevelStyle>9.0-all</AnalysisLevelStyle>
+    <!-- IDE0005 needs the XML doc file on build (dotnet/roslyn#41640); kept in obj/. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DocumentationFile>$(IntermediateOutputPath)$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <Target Name="Project props" BeforeTargets="BeforeCompile" Condition="!$(AssemblyName.EndsWith('.Configuration'))">
+    <Message Importance="High" Text="*********** Project [$(MSBuildProjectFile)] TargetFramework [$(TargetFramework)]" />
+    <Message Importance="High" Text="*********** AnalysisMode [$(AnalysisMode)]" />
+    <Message Importance="High" Text="*********** AnalysisLevel [$(AnalysisLevel)]" />
+    <Message Importance="High" Text="*********** EnableNETAnalyzers [$(EnableNETAnalyzers)]" />
+    <Message Importance="High" Text="*********** EnforceCodeStyleInBuild [$(EnforceCodeStyleInBuild)]" />
+    <Message Importance="High" Text="*********** TreatWarningsAsErrors [$(TreatWarningsAsErrors)]" />
+  </Target>
+</Project>
