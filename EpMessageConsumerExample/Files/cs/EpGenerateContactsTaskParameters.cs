@@ -4,7 +4,7 @@ namespace EP.EpMessageConsumerExample
     /// Parameters of <see cref="EpGenerateContactsBackgroundTask"/>. Kept to primitives on purpose:
     /// the runner serializes them with MessagePack before handing them to the executing actor.
     /// </summary>
-    public sealed class EpGenerateContactsTaskParameters
+    public sealed class EpGenerateContactsTaskParameters : IEpGenerateContactsRequest
     {
         /// <summary>
         /// Upper bound for <see cref="Count"/>. It is twenty times the limit of

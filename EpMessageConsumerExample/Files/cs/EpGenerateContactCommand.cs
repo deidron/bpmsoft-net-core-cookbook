@@ -1,6 +1,6 @@
 namespace EP.EpMessageConsumerExample
 {
-    public sealed class EpGenerateContactCommand
+    public sealed class EpGenerateContactCommand : IEpGenerateContactsRequest
     {
         /// <summary>
         /// Upper bound for <see cref="Count"/>, deliberately modest. This command fans out into one
