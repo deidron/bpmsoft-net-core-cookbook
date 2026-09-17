@@ -1,6 +1,7 @@
 <Project>
-    <!-- Analyzer settings live in Directory.Build.targets: the '.Configuration' guard
-         relies on $(AssemblyName), which is not yet set this early (.props is imported
-         before the SDK .props that defaults AssemblyName). This stub is kept so MSBuild
-         stops the upward Directory.Build.props search here. -->
+    <!-- Analyzers are set in .targets: AssemblyName is empty here in a package build.
+         The guard is for Dev csproj that import this file after AssemblyName. -->
+    <PropertyGroup Condition="!$(AssemblyName.EndsWith('.Configuration'))">
+        <EnableReferenceTrimmer Condition=" '$(EnableReferenceTrimmer)' == '' ">false</EnableReferenceTrimmer>
+    </PropertyGroup>
 </Project>
