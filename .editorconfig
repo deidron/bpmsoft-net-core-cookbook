@@ -149,6 +149,10 @@ dotnet_naming_symbols.local_constants.required_modifiers = const
 dotnet_code_quality.CA1710.api_surface = all
 dotnet_code_quality.CA1715.api_surface = all
 
+# CA2000: clients come from IHttpClientFactory, which owns the handler and is not
+# disposed by the caller. The option matches the disposable type, not its source.
+dotnet_code_quality.CA2000.excluded_type_names_with_derived_types = T:System.Net.Http.HttpClient
+
 # Code style defaults
 dotnet_sort_system_directives_first = true
 csharp_prefer_braces = when_multiline
