@@ -15,6 +15,10 @@
     <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+  <!-- Unused references (RT0001-RT0003); off by default, see .props. -->
+  <ItemGroup Condition="!$(AssemblyName.EndsWith('.Configuration'))">
+    <PackageReference Include="ReferenceTrimmer" Version="3.5.9" PrivateAssets="all" />
+  </ItemGroup>
   <Target Name="Project props" BeforeTargets="BeforeCompile" Condition="!$(AssemblyName.EndsWith('.Configuration'))">
     <Message Importance="High" Text="*********** Project [$(MSBuildProjectFile)] TargetFramework [$(TargetFramework)]" />
     <Message Importance="High" Text="*********** AnalysisMode [$(AnalysisMode)]" />
