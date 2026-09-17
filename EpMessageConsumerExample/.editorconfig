@@ -1,12 +1,8 @@
-# Package overrides (no root = true): netstandard2.0 and BPMSoft conventions only.
+# Package overrides (no root = true): platform conventions, plus netstandard2.0 for Files/cs.
 
 [*.cs]
 # Using directives inside the namespace — BPMSoft schema convention.
 csharp_using_directive_placement = inside_namespace
-
-# netstandard2.0 ships no System.Index / System.Range, so ^i and a..b do not compile.
-csharp_style_prefer_index_operator = false
-csharp_style_prefer_range_operator = false
 
 # IDE0130: Namespace does not match folder structure — BPMSoft/Creatio package
 # folders (Pkg/<PackageName>/...) are not tied to C# namespaces by platform convention.
@@ -24,6 +20,11 @@ dotnet_naming_symbols.classes.applicable_accessibilities = *
 dotnet_naming_style.begins_with_ep_style.required_prefix = Ep
 dotnet_naming_style.begins_with_ep_style.capitalization = pascal_case
 
+# Package assembly is netstandard2.0: no System.Index / System.Range, so ^i and a..b do not compile.
+# Schemas compile as net8.0 and keep the defaults.
+[Files/cs/**.cs]
+csharp_style_prefer_index_operator = false
+csharp_style_prefer_range_operator = false
 
 # CA1822: WCF/BPMSoft service methods must be instance methods — static is not valid here.
 [*Service.cs]
