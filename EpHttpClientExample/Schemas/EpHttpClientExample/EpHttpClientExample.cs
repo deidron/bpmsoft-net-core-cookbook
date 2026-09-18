@@ -25,15 +25,12 @@ namespace BPMSoft.Configuration.EP
         {
             try
             {
+                Uri uriEndpoint = new(endpoint);
                 HttpClient client = _httpClientFactory.CreateClient();
-                using (HttpResponseMessage response = await client.GetAsync(endpoint, cancellationToken))
+                using (HttpResponseMessage response = await client.GetAsync(uriEndpoint, cancellationToken).ConfigureAwait(false))
                 {
                     if (response.IsSuccessStatusCode)
-#if NET5_0_OR_GREATER
-                        return await response.Content.ReadAsStringAsync(cancellationToken);
-#else
-                        return await response.Content.ReadAsStringAsync();
-#endif
+                        return await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
                     _logger.Error($"Server returned an error {response.StatusCode} for {endpoint}");
                     return null;
                 }
