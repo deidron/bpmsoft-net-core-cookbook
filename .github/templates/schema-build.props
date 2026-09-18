@@ -1,0 +1,24 @@
+<Project>
+
+  <!-- Imported by schema-package.csproj for a full compile (local, ConfigurationRefsPath exists;
+       usually .configuration-refs in the repo root, see .devcontainer/README.md). -->
+
+  <PropertyGroup>
+    <AssemblyName>Schemas</AssemblyName>
+    <EnableReferenceTrimmer>false</EnableReferenceTrimmer>
+    <AnalysisMode>All</AnalysisMode>
+    <AnalysisLevel>8.0</AnalysisLevel>
+    <AnalysisLevelStyle>9.0-all</AnalysisLevelStyle>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591;CA1016;CS0436</NoWarn>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="$(ConfigurationRefsPath)/*.dll" Private="false" />
+  </ItemGroup>
+
+</Project>

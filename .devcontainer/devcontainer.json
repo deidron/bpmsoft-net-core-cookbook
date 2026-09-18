@@ -31,11 +31,15 @@
     "+"
   ],
   "postCreateCommand": "bash scripts/fetch-platform-libs.sh",
+  "containerEnv": {
+    "ConfigurationRefsPath": "${containerWorkspaceFolder}/.configuration-refs"
+  },
   "customizations": {
     "vscode": {
       "settings": {
         "files.exclude": { "dotnet": true },
-        "files.watcherExclude": { "**/dotnet/**": true }
+        "files.watcherExclude": { "**/dotnet/**": true, "**/.configuration-refs/**": true },
+        "search.exclude": { "**/.configuration-refs": true }
       },
       "extensions": [
         "ms-dotnettools.csharp",

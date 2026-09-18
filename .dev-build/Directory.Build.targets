@@ -1,0 +1,36 @@
+<Project>
+
+  <PropertyGroup Condition="$(AssemblyName.EndsWith('.Configuration')) and '$(GITHUB_ACTIONS)' != 'true'">
+    <ConfigurationRefsPath Condition="'$(ConfigurationRefsPath)' == ''">$(MSBuildThisFileDirectory)..\.configuration-refs</ConfigurationRefsPath>
+    <_ConfigurationRefsMarker>$(ConfigurationRefsPath)\.configuration-refs.marker</_ConfigurationRefsMarker>
+  </PropertyGroup>
+
+  <Target Name="AutoCollectAllRealDependencies" AfterTargets="ResolveAssemblyReferences" DependsOnTargets="ResolveAssemblyReferences"
+          Condition="$(AssemblyName.EndsWith('.Configuration')) and '$(GITHUB_ACTIONS)' != 'true'">
+    <Message Importance="high" Text="[AutoCopy] Copying dependencies to $(ConfigurationRefsPath)..." />
+    <ItemGroup>
+      <_ExistingRefs Include="$(ConfigurationRefsPath)\*.dll" />
+    </ItemGroup>
+    <MakeDir Directories="$(ConfigurationRefsPath)" Condition="!Exists('$(ConfigurationRefsPath)')" />
+    <Touch Files="$(_ConfigurationRefsMarker)" AlwaysCreate="true"
+           Condition="!Exists('$(_ConfigurationRefsMarker)') and '@(_ExistingRefs)' == ''" />
+    <ItemGroup>
+      <_ConfigurationRefs Include="@(ReferencePath)" Condition="'%(ReferencePath.FrameworkReferenceName)' == ''" />
+      <_StaleRefs Include="$(ConfigurationRefsPath)\*.dll"
+                  Exclude="@(_ConfigurationRefs->'$(ConfigurationRefsPath)\%(Filename)%(Extension)');$(ConfigurationRefsPath)\$(TargetFileName)"
+                  Condition="Exists('$(_ConfigurationRefsMarker)') and '@(_ConfigurationRefs)' != ''" />
+    </ItemGroup>
+    <Delete Files="@(_StaleRefs)" />
+    <Copy SourceFiles="@(_ConfigurationRefs)" DestinationFolder="$(ConfigurationRefsPath)" SkipUnchangedFiles="true" />
+    <Message Importance="high" Text="[AutoCopy] Done: @(_ConfigurationRefs->Count()) file(s), removed @(_StaleRefs->Count()) stale." />
+    <Message Importance="high" Condition="!Exists('$(_ConfigurationRefsMarker)')"
+             Text="[AutoCopy] No $(_ConfigurationRefsMarker): stale files are not removed from this folder." />
+  </Target>
+
+  <Target Name="CollectConfigurationAssembly" AfterTargets="Build"
+          Condition="$(AssemblyName.EndsWith('.Configuration')) and '$(GITHUB_ACTIONS)' != 'true'">
+    <Copy SourceFiles="$(TargetRefPath)" DestinationFolder="$(ConfigurationRefsPath)" SkipUnchangedFiles="true" Condition="Exists('$(TargetRefPath)')" />
+    <Message Importance="high" Text="[AutoCopy] $(TargetFileName) (reference assembly) -> $(ConfigurationRefsPath)" />
+  </Target>
+
+</Project>

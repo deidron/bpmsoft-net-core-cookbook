@@ -440,6 +440,9 @@ scripts/local/
 .platform-libs/
 .platform-libs-src/
 
+# Everything the configuration assembly references (+ its reference assembly); filled by .dev-build, used by build-schema.sh
+.configuration-refs/
+
 # UBS (Utilities of BPMSoft) — downloaded/extracted at CI time, never committed
 .ubs/
 
