@@ -62,6 +62,21 @@ bash .github/scripts/build.sh <Package>
 
 Linting needs no token; only the full build does.
 
+### 4. Schema build (optional)
+
+`build-schema.sh` compiles `Schemas/*/*.cs` against everything the configuration assembly references, with the
+package's analyzers. That set is not in the libs repo: on the host, building the
+configuration Dev csproj fills `.configuration-refs/` in the repo root (gitignored); see
+[.dev-build/README.md](../.dev-build/README.md). The workspace is bind-mounted, and
+`containerEnv` points `ConfigurationRefsPath` there, so no extra mount is needed:
+
+```bash
+bash .github/scripts/build-schema.sh <Package>
+```
+
+A `ConfigurationRefsPath` in a package's `local.props` overrides `containerEnv`; use a relative
+path there (`$(MSBuildThisFileDirectory)../.configuration-refs`) so it works on both sides.
+
 ## Troubleshooting
 
 **`ResolvePackageAssets` fails with `C:\Program Files (x86)\...\NuGetPackages`** — the C# server
