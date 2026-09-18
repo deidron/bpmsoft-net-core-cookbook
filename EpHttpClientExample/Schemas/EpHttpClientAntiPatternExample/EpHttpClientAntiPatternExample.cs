@@ -25,15 +25,12 @@ namespace BPMSoft.Configuration.EP
             try
             {
                 // Error: HttpClient is recreated and disposed on every call
-                using (var client = new HttpClient())
-                using (HttpResponseMessage response = await client.GetAsync(endpoint, cancellationToken))
+                Uri uriEndpoint = new(endpoint);
+                using (HttpClient client = new())
+                using (HttpResponseMessage response = await client.GetAsync(uriEndpoint, cancellationToken).ConfigureAwait(false))
                 {
                     if (response.IsSuccessStatusCode)
-#if NET5_0_OR_GREATER
-                        return await response.Content.ReadAsStringAsync(cancellationToken);
-#else
-                        return await response.Content.ReadAsStringAsync();
-#endif
+                        return await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
                     _logger.Error($"Server returned an error {response.StatusCode} for {endpoint}");
                     return null;
                 }
