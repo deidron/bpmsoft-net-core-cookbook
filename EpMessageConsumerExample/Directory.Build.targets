@@ -1,20 +1,4 @@
 <Project>
-  <PropertyGroup Condition="!$(AssemblyName.EndsWith('.Configuration'))">
-    <AnalysisMode>All</AnalysisMode>
-    <!-- Style level 9.0 attaches the IDE rule set on the .NET 8 SDK:
-         https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/language-rules#option-format
-         https://github.com/dotnet/roslyn/pull/71173 -->
-    <AnalysisLevel>8.0</AnalysisLevel>
-    <AnalysisLevelStyle>9.0-all</AnalysisLevelStyle>
-    <!-- IDE0005 needs the XML doc file on build (dotnet/roslyn#41640); kept in obj/. -->
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <DocumentationFile>$(IntermediateOutputPath)$(AssemblyName).xml</DocumentationFile>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
   <!-- Unused references (RT0001-RT0003); off by default, see .props. -->
   <ItemGroup Condition="!$(AssemblyName.EndsWith('.Configuration'))">
     <PackageReference Include="ReferenceTrimmer" Version="3.5.9" PrivateAssets="all" />

@@ -4,7 +4,10 @@
        usually .configuration-refs in the repo root, see .devcontainer/README.md). -->
 
   <PropertyGroup>
-    <AssemblyName>Schemas</AssemblyName>
+    <!-- Same assembly name as in the application, so InternalsVisibleTo($(CoreProduct).Configuration)
+         of the packages applies. CoreProduct comes from the package .props, not imported here. -->
+    <CoreProduct Condition="'$(CoreProduct)' == ''">BPMSoft</CoreProduct>
+    <AssemblyName>$(CoreProduct).Configuration</AssemblyName>
     <EnableReferenceTrimmer>false</EnableReferenceTrimmer>
     <AnalysisMode>All</AnalysisMode>
     <AnalysisLevel>8.0</AnalysisLevel>
