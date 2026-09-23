@@ -1,9 +1,9 @@
 namespace BPMSoft.Configuration
 {
+    using System;
     using BPMSoft.Core.Factories;
     using BPMSoft.Web.Common;
     using global::Common.Logging;
-    using System;
     using global::EP.EpNInjectContainerExample.Api;
 
     public class EpNInjectContainerListener : AppEventListenerBase
