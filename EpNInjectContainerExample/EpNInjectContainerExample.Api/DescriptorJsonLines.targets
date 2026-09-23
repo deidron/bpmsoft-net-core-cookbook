@@ -1,0 +1,31 @@
+<Project>
+  <Target Name="BuildDescriptorJsonLines">
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="AssemblyInfo" />
+    </GetAssemblyIdentity>
+    <PropertyGroup>
+      <_DescriptorDir>$(RelativeCurrentPkgFolderPath)Assemblies/$(AssemblyName)</_DescriptorDir>
+      <_CurrentUnixMillis>$([System.DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds())</_CurrentUnixMillis>
+      <_IsNetStandard Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(_IsNetCoreApp)' == 'true'">true</_IsNetStandard>
+      <_IsNetStandard Condition="'$(_IsNetStandard)' == ''">false</_IsNetStandard>
+      <_Culture Condition="'%(AssemblyInfo.Culture)' == ''">neutral</_Culture>
+      <_Culture Condition="'%(AssemblyInfo.Culture)' != ''">%(AssemblyInfo.Culture)</_Culture>
+      <_PublicKeyToken Condition="'%(AssemblyInfo.PublicKeyToken)' == ''">null</_PublicKeyToken>
+      <_PublicKeyToken Condition="'%(AssemblyInfo.PublicKeyToken)' != ''">%(AssemblyInfo.PublicKeyToken)</_PublicKeyToken>
+      <_Version>%(AssemblyInfo.Version)</_Version>
+      <_FullName>$(AssemblyName), Version=$(_Version), Culture=$(_Culture), PublicKeyToken=$(_PublicKeyToken)</_FullName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_JsonLines Include="{" />
+      <_JsonLines Include="%20%20%22Descriptor%22: {" />
+      <_JsonLines Include="%20%20%20%20%22UId%22: %22$(ApiAssemblyUId)%22," />
+      <_JsonLines Include="%20%20%20%20%22Name%22: %22$(AssemblyName).dll%22," />
+      <_JsonLines Include="%20%20%20%20%22FullName%22: %22$(_FullName)%22," />
+      <_JsonLines Include="%20%20%20%20%22IsNetStandard%22: $(_IsNetStandard)," />
+      <_JsonLines Include="%20%20%20%20%22ModifiedOnUtc%22: %22%5C%2FDate($(_CurrentUnixMillis))%5C%2F%22" />
+      <_JsonLines Include="%20%20}" />
+      <_JsonLines Include="}" />
+    </ItemGroup>
+  </Target>
+</Project>
