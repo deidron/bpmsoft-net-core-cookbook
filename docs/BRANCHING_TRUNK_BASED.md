@@ -32,10 +32,17 @@ Merges into `main` are **squash**, so history stays linear — one PR = one comm
 
 A release is a tag on a `main` commit; there is no `dev → main` PR and no merge bubble.
 
+The tag numbers the release itself. It is unrelated to `$(Version)` in the package `.props`
+or to `BPMSoftVersion` in `descriptor.json` — those name the platform the packages target.
+
 ```bash
-git tag v1.9.2 <main-sha>     # version from $(Version) in the .props
-git push origin v1.9.2        # then cut a GitHub Release
+git tag v1.0.0 <main-sha>     # release numbering, independent of the platform version
+git push origin v1.0.0        # the GitHub Release is cut by deploy-prod.yml, not by hand
 ```
+
+A tag with a hyphen (`v1.0.0-rc1`) deploys but publishes no release — see the `release-assets`
+job in [`deploy-prod.yml`](../.github/workflows/deploy-prod.yml). Use it to exercise the
+pipeline; the production deploy it performs is real.
 
 ## Hotfixes
 
