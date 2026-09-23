@@ -1,6 +1,9 @@
 set -euo pipefail
 
 pkg="$1"
+# --no-test: build only. Used by the pack job, which needs the binaries in
+# Files/Bin and Assemblies (both gitignored) but not a second test run.
+mode="${2:-}"
 sln=$(find "$pkg" -maxdepth 1 -name '*.sln'   | head -1)
 prj=$(find "$pkg" -maxdepth 1 -name '*.csproj' | head -1)
 target="${sln:-$prj}"
@@ -17,6 +20,7 @@ fi
 dotnet restore "$target"
 dotnet build   "$target" --no-restore --configuration Release
 
+[[ "$mode" == "--no-test" ]] && exit 0
 [[ -z "$sln" ]] && exit 0
 dotnet test "$sln" --configuration Release \
   --logger "trx;LogFileName=test-results.trx" \
