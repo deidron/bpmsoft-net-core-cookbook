@@ -13,6 +13,7 @@ namespace EP.EpNInjectContainerExample
             ArgumentNullException.ThrowIfNull(userConnection);
             UserName = userConnection.CurrentUser.Name;
             ContactId = userConnection.CurrentUser.ContactId;
+            s_log.Debug($"User context {ContextId} created.");
         }
 
         public Guid ContextId { get; } = Guid.NewGuid();

@@ -16,7 +16,7 @@ namespace EP.EpNInjectContainerExample
 
         public override void Load()
         {
-            s_log.Info($"{nameof(EpNInjectModule)} start");
+            s_log.Debug($"{nameof(EpNInjectModule)}: loading bindings.");
             _ = Bind<IEpNotificationFormatter>().To<EpPlainTextNotificationFormatter>().InSingletonScope();
             _ = Bind<IEpNotificationFormatter>().To<EpHtmlNotificationFormatter>()
                 .WhenInjectedInto<EpEmailNotificationChannel>().InSingletonScope();
