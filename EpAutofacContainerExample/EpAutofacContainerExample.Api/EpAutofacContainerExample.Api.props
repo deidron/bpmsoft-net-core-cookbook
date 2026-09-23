@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <RootProject>$([System.Text.RegularExpressions.Regex]::Replace($(AssemblyName), '\.Api$', ''))</RootProject>
+    <ApiAssemblyUId>3d891fc8-e842-448b-91ce-5f9a83da5140</ApiAssemblyUId>
+    <NoWarn>$(NoWarn);RT0001</NoWarn>
+  </PropertyGroup>
+  <Import Project="../$(RootProject).props" Condition="Exists('../$(RootProject).props')" />
+</Project>
