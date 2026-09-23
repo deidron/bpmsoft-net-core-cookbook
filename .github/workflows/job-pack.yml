@@ -8,9 +8,19 @@ on:
         description: "JSON array of all packages to be packed"
         required: true
         type: string
+      build_packages:
+        description: >-
+          JSON array of packages with a code project. They are built here before
+          zipping: the package assembly (Files/Bin) and the .Api assembly with its
+          descriptor (Assemblies/<name>) are gitignored build output, so a plain
+          checkout has neither and would ship a package without its binaries.
+          Not every package has a project, hence a second list.
+        required: false
+        default: "[]"
+        type: string
     secrets:
       GH_PAT:
-        description: "GitHub Personal Access Token for UBS setup"
+        description: "GitHub Personal Access Token for UBS setup and platform libs"
         required: true
 
 permissions:
@@ -23,6 +33,30 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
+
+      - uses: ./.github/actions/setup-dotnet-env
+        if: inputs.build_packages != '[]'
+
+      # Same platform reference assemblies as job-build; the package projects do
+      # not compile without them.
+      - name: Restore platform libs
+        if: inputs.build_packages != '[]' && vars.PLATFORM_LIBS_REPO != ''
+        uses: ./.github/actions/restore-platform-libs
+        with:
+          repo: ${{ vars.PLATFORM_LIBS_REPO }}
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Build packages
+        if: inputs.build_packages != '[]'
+        env:
+          BUILD_PACKAGES: ${{ inputs.build_packages }}
+        run: |
+          # Tests already ran in job-build; here we only need the binaries.
+          jq -r '.[]' <<< "$BUILD_PACKAGES" | while read -r pkg; do
+            echo "::group::Building $pkg"
+            bash .github/scripts/build.sh "$pkg" --no-test
+            echo "::endgroup::"
+          done
 
       - name: Setup UBS
         uses: ./.github/actions/setup-ubs

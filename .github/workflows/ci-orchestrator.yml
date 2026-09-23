@@ -65,6 +65,7 @@ jobs:
     uses: ./.github/workflows/job-pack.yml
     with:
       packages: ${{ needs.detect.outputs.all_packages }}
+      build_packages: ${{ needs.detect.outputs.package_project }}
     secrets:
       GH_PAT: ${{ secrets.GH_PAT }}
 
