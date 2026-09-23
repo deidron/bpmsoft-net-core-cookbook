@@ -62,7 +62,7 @@ namespace EP.EpNInjectContainerExample
                 IKernel kernel = s_kernel;
                 if (kernel is null)
                 {
-                    s_log.Debug("Ninject Kernel is not set; nothing to dispose.");
+                    s_log.Debug("Ninject Kernel is not set. Nothing to dispose.");
                     return;
                 }
                 Volatile.Write(ref s_kernel, null);

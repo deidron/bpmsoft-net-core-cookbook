@@ -14,7 +14,7 @@ namespace EP.EpNInjectContainerExample
         public void Initialize()
         {
             if (!EpNInjectContainer.TryInitialize(CreateKernel))
-                s_log.Warn("Ninject Kernel is already initialized; nothing was built.");
+                s_log.Warn("Ninject Kernel is already initialized. Nothing was built.");
         }
 
         public void Stop() => EpNInjectContainer.Shutdown();
