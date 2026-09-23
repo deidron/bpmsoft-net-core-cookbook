@@ -2,6 +2,12 @@
   "$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
   "tasks": [
     {
+      "name": "pre-commit (schema format)",
+      "group": "pre-commit",
+      "command": "bash",
+      "args": [".husky/format-schema.sh"]
+    },
+    {
       "name": "commit-msg (conventional commits)",
       "group": "commit-msg",
       "command": "bash",
