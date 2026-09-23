@@ -1,0 +1,81 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(MSBuildThisFileDirectory)$(MSBuildProjectName).props" Condition="Exists('$(MSBuildThisFileDirectory)$(MSBuildProjectName).props')" />
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(CoreProduct).Configuration" />
+    <InternalsVisibleTo Include="$(RootProject)" />
+    <InternalsVisibleTo Include="$(TestsAssemblyName)" />
+  </ItemGroup>
+  <PropertyGroup Label="Path">
+    <RelativeCurrentPkgFolderPath Condition="'$(RelativeCurrentPkgFolderPath)' == ''">../</RelativeCurrentPkgFolderPath>
+    <RelativePkgFolderPath Condition="'$(RelativePkgFolderPath)' == ''">$(RelativeCurrentPkgFolderPath)..</RelativePkgFolderPath>
+    <ConfLibPath Condition="'$(ConfLibPath)' == ''">$(RelativePkgFolderPath)/../Lib</ConfLibPath>
+  </PropertyGroup>
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'net472'">
+      <PropertyGroup>
+        <CoreLibPath Condition="'$(CoreLibPath)' == ''">$(RelativePkgFolderPath)/../../bin</CoreLibPath>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(_IsNetCoreApp)' == 'true'">
+      <PropertyGroup>
+        <CoreLibPath Condition="'$(CoreLibPath)' == ''">$(RelativePkgFolderPath)/../..</CoreLibPath>
+      </PropertyGroup>
+    </When>
+  </Choose>
+  <ItemGroup>
+    <Compile Remove="$(RelativeCurrentPkgFolderPath)$(AssemblyName)/$(TestsAssemblyName)/**" />
+    <EmbeddedResource Remove="$(RelativeCurrentPkgFolderPath)$(AssemblyName)/$(TestsAssemblyName)/**" />
+    <None Remove="$(RelativeCurrentPkgFolderPath)$(AssemblyName)/$(TestsAssemblyName)/**" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(_IsNetCoreApp)' == 'true'">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'net472'">
+      <ItemGroup>
+        <Reference Include="System.ServiceModel" />
+        <Reference Include="System.ServiceModel.Activation" />
+        <Reference Include="System.ServiceModel.Web" />
+        <Reference Include="System.Web" />
+      </ItemGroup>
+      <ItemGroup Label="Core References">
+        <Reference Include="$(CoreProduct).Reports">
+          <HintPath>$(CoreLibPath)/$(CoreProduct).Reports.dll</HintPath>
+          <SpecificVersion>False</SpecificVersion>
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="$(CoreProduct).GoogleServices">
+          <HintPath>$(CoreLibPath)/$(CoreProduct).GoogleServices.dll</HintPath>
+          <SpecificVersion>False</SpecificVersion>
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(_IsNetCoreApp)' == 'true'">
+      <ItemGroup Label="Core References">
+        <Reference Include="$(CoreProduct).Messaging.Common.Standard">
+          <HintPath>$(CoreLibPath)/$(CoreProduct).Messaging.Common.Standard.dll</HintPath>
+          <SpecificVersion>False</SpecificVersion>
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="$(CoreProduct).ServiceModel.Primitives">
+          <HintPath>$(CoreLibPath)/$(CoreProduct).ServiceModel.Primitives.dll</HintPath>
+          <SpecificVersion>False</SpecificVersion>
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <ItemGroup Label="Core References">
+    <Reference Include="$(CoreProduct).Core">
+      <HintPath>$(CoreLibPath)/$(CoreProduct).Core.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Label="Package References" />
+  <ItemGroup Label="Standalone package external assembly references" />
+  <ItemGroup Label="Entity Files" />
+  <ItemGroup Label="3rd Party References" />
+  <Import Project="$(MSBuildThisFileDirectory)$(MSBuildProjectName).targets" Condition="Exists('$(MSBuildThisFileDirectory)$(MSBuildProjectName).targets')" />
+</Project>

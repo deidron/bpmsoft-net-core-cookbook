@@ -1,0 +1,39 @@
+<Project>
+  <Import Project="$(MSBuildThisFileDirectory)CI.props" Condition="Exists('$(MSBuildThisFileDirectory)CI.props')" />
+  <Import Project="$(MSBuildThisFileDirectory)local.props" Condition="Exists('$(MSBuildThisFileDirectory)local.props')" />
+  <PropertyGroup Label="Per-package settings">
+    <LocalGitLibsPath Condition="'$(LocalGitLibsPath)' == ''">..\.platform-libs</LocalGitLibsPath>
+    <Version>1.9.1</Version>
+    <CopyrightYear Condition="'$(CopyrightYear)' == ''">2026</CopyrightYear>
+    <CoreLibPath Condition="'$(GITHUB_ACTIONS)' == 'true' Or '$(REMOTE_CONTAINERS)' == 'true'">$(LocalGitLibsPath)</CoreLibPath>
+    <CoreTargetFramework>net8.0</CoreTargetFramework>
+    <CoreProduct>BPMSoft</CoreProduct>
+  </PropertyGroup>
+  <PropertyGroup Label="Shared boilerplate">
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <CoreCompany Condition="'$(CoreCompany)' == ''">EP</CoreCompany>
+    <Company>$(CoreCompany)</Company>
+    <Copyright>Copyright (c) $(CopyrightYear) $(CoreCompany).</Copyright>
+    <Product>$(CoreProduct)</Product>
+    <RootNamespace>$([System.Text.RegularExpressions.Regex]::Replace($(Company), '[^a-zA-Z0-9_]', '')).$(AssemblyName.Replace(' ', '_'))</RootNamespace>
+    <TargetFramework>$(CoreTargetFramework)</TargetFramework>
+    <!-- True for modern .NET (net5.0..net9.0+), false for net4xx and netstandard.
+             TargetFrameworkIdentifier is not yet available during body/Choose evaluation,
+             so this is derived from the TFM string, which is. -->
+    <_IsNetCoreApp Condition="$(TargetFramework.StartsWith('net')) And !$(TargetFramework.StartsWith('net4')) And !$(TargetFramework.StartsWith('nets'))">true</_IsNetCoreApp>
+    <TestsAssemblyName Condition="'$(TestsAssemblyName)' == ''">$(AssemblyName).Tests</TestsAssemblyName>
+    <TestsProjectPath>$(TestsAssemblyName)\$(TestsAssemblyName).csproj</TestsProjectPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <MSBuildWarningsAsMessages>MSB3277;MSB3245;MSB3243</MSBuildWarningsAsMessages>
+    <NoWarn>$(NoWarn);CS1522;CS0162</NoWarn>
+  </PropertyGroup>
+</Project>
