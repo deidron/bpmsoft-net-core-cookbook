@@ -1,0 +1,14 @@
+<Project>
+  <Import Project="../$(RootProject).targets" Condition="Exists('../$(RootProject).targets')" />
+  <Import Project="DescriptorJsonLines.targets" />
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(RelativeCurrentPkgFolderPath)Assemblies\$(AssemblyName)\$(TargetFileName)" SkipUnchangedFiles="true" />
+  </Target>
+  <Target Name="GenerateAssemblyDescriptor" AfterTargets="PostBuild" DependsOnTargets="BuildDescriptorJsonLines"
+          Inputs="$(TargetPath)" Outputs="$(_DescriptorDir)/descriptor.json">
+    <WriteLinesToFile
+        File="$(_DescriptorDir)/descriptor.json"
+        Lines="@(_JsonLines)"
+        Overwrite="true" />
+  </Target>
+</Project>

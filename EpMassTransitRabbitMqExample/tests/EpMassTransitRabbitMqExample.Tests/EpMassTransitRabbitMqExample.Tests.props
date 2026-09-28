@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <RootProject>$([System.Text.RegularExpressions.Regex]::Replace($(AssemblyName), '\.Tests$', ''))</RootProject>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <NoWarn>$(NoWarn);RT0001</NoWarn>
+  </PropertyGroup>
+  <Import Project="../../$(RootProject).props" Condition="Exists('../../$(RootProject).props')" />
+</Project>
