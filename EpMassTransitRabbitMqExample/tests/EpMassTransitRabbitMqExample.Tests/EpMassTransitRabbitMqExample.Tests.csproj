@@ -53,6 +53,10 @@
       <HintPath>$(CoreLibPath)/MassTransit.ExtensionsDependencyInjectionIntegration.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces">
+      <HintPath>$(CoreLibPath)/Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="MassTransit.RabbitMqTransport">
       <HintPath>$(CoreLibPath)/MassTransit.RabbitMqTransport.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
