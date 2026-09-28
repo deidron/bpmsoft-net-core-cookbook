@@ -1,0 +1,9 @@
+﻿{
+  "Descriptor": {
+    "UId": "7d81b1d7-4e40-4f1e-af08-e88f47239ba9",
+    "Name": "EpMassTransitRabbitMqListener",
+    "ModifiedOnUtc": "\/Date(1790344809000)\/",
+    "ManagerName": "SourceCodeSchemaManager",
+    "Caption": "EpMassTransitRabbitMqListener"
+  }
+}

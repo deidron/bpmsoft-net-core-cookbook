@@ -484,3 +484,4 @@ Workplace/
 
 # Machine-specific package settings (local paths, IIS app pool)
 **/local.props
+**/local.runsettings

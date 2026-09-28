@@ -1,0 +1,16 @@
+﻿{
+  "MetaData": {
+    "Schema": {
+      "ManagerName": "SourceCodeSchemaManager",
+      "UId": "7d81b1d7-4e40-4f1e-af08-e88f47239ba9",
+      "A2": "EpMassTransitRabbitMqListener",
+      "A5": "8724602c-2d71-42de-af83-6b3d2f5e7454",
+      "B1": [],
+      "B2": [],
+      "B3": [],
+      "B6": "04b529c0-6831-7779-df0c-cfc596c94d38",
+      "B8": "1.9.1.2",
+      "HD1": "50e3acc0-26fc-4237-a095-849a1d534bd3"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+<Project>
+  <PropertyGroup Condition="!$(MSBuildProjectName.EndsWith('.Configuration'))">
+    <AnalysisMode>All</AnalysisMode>
+    <!-- Style level 9.0 attaches the IDE rule set on the .NET 8 SDK:
+         https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/language-rules#option-format
+         https://github.com/dotnet/roslyn/pull/71173 -->
+    <AnalysisLevel>8.0</AnalysisLevel>
+    <AnalysisLevelStyle>9.0-all</AnalysisLevelStyle>
+    <!-- IDE0005 needs the XML doc file on build (dotnet/roslyn#41640); SDK puts it in obj/. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <CopyDocumentationFileToOutputDirectory>false</CopyDocumentationFileToOutputDirectory>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableReferenceTrimmer Condition=" '$(EnableReferenceTrimmer)' == '' ">false</EnableReferenceTrimmer>
+  </PropertyGroup>
+</Project>
